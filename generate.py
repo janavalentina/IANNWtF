@@ -12,7 +12,7 @@ from train_vae import SPECTOGRAMS_PATH
 
 HOP_LENGTH = 256
 SAVE_DIR_ORIGINAL = os.path.join('dataset', 'generation', 'original')
-SAVE_DIR_GENERATED = os.path.join('dataset', 'generation', 'original')
+SAVE_DIR_GENERATED = os.path.join('dataset', 'generation', 'generated')
 MIN_MAX_VALUES_PATH = os.path.join('dataset', 'fsdd', 'min_max_values.pkl')
 
 

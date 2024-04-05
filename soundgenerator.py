@@ -11,10 +11,16 @@ class SoundGenerator:
         self.hop_length = hop_length
         self._min_max_normalizer = MinMaxNormaliser(0, 1)
 
-    def generate(self, spectograms, min_max_values):
-        generated_spectograms, latent_representations = \
-            self.vae.reconstruct(spectograms)
-        signals = self.convert_spectograms_to_audio(generated_spectograms, min_max_values)
+    def generate(self, spectrograms, min_max_values):
+        generated_spectrograms = [] 
+        latent_representations = []
+
+        for spectrogram in spectrograms:
+            generated_spectogram, latent_representation = self.vae.reconstruct(spectrogram)
+            generated_spectrograms.append(generated_spectogram)
+            latent_representations.append(latent_representation)
+
+        signals = self.convert_spectograms_to_audio(generated_spectrograms, min_max_values)
         return signals, latent_representations
 
     def convert_spectograms_to_audio(self, spectograms, min_max_values):
