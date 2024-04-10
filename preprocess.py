@@ -106,14 +106,14 @@ class Saver:
 
 class PreprocessingPipeline:
     """PreprocessingPipeline processes audio files in a directory,
-    apply the following steps to each file:
+    applying the following steps to each file:
         1- load a file
         2- pad the signal (if necessary)
-        3- extracting log spectogram from signal
-        4- normalize spectogram
-        5- save the normalise spectogram
+        3- extracting log spectrogram from signal
+        4- normalize spectrogram
+        5- save the normalised spectrogram
 
-    Storing the min max values of all the log spectograms.
+    Storing the min max values of all the log spectrograms.
     """
 
     def __init__(self):
@@ -177,6 +177,20 @@ class PreprocessingPipeline:
         }
 
 
+def load_fsdd(spectrograms_path):
+    x_train = []
+    file_paths = []
+    for root, _, file_names in os.walk(spectrograms_path):
+        for file_name in file_names:
+            file_path = os.path.join(root, file_name)
+            spectrogram = np.load(file_path) # (n_bins, n_frames, 1)
+            x_train.append(spectrogram)
+            file_paths.append(file_path)
+    x_train = np.array(x_train)
+    x_train = x_train[..., np.newaxis] # -> (3000, 256, 64, 1)
+    return x_train, file_paths
+
+
 if __name__ == "__main__":
     FRAME_SIZE = 512
     HOP_LENGTH = 256
@@ -204,3 +218,12 @@ if __name__ == "__main__":
 
     preprocessing_pipeline.process(FILES_DIR)
 
+
+    # Convert the preprocessed spectrograms to a lighter file format
+    SPECTOGRAMS_PATH = os.path.join("dataset", "fsdd", "spectrograms")
+    x_train, filepaths = load_fsdd(SPECTOGRAMS_PATH)
+    with open(os.path.join('dataset', 'fsdd', 'pickled_spectrograms.npy'), 'wb') as f:
+        np.save(f, x_train)
+
+    with open(os.path.join('dataset', 'fsdd', 'pickled_filepaths.npy'), 'wb') as f:
+        np.save(f, filepaths)
